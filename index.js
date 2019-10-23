@@ -42,8 +42,8 @@ SensirionAQS.prototype = {
 			.setCharacteristic(Characteristic.FirmwareRevision, "1.0.0")
 			.setCharacteristic(Characteristic.SerialNumber, this.device);
 
-	  if(fs.existsSync('/tmp/sensor-sps30.txt')) {
-			setInterval(function(){
+		setInterval(function(){
+			if(fs.existsSync('/tmp/sensor-sps30.txt')) {
 				if(this.debug) {this.log("running timer");}
 
 				var count = 0;
@@ -68,9 +68,9 @@ SensirionAQS.prototype = {
 						this.AQS.getCharacteristic(Characteristic.PM10Density).updateValue(line.split(' ')[1]);
 					}
 				}.bind(this));
-			}.bind(this), 1000);
-		}
-		else {this.log("Unable to find log file from sensor");}
+			}
+			else if(this.debug) {this.log("Unable to find log file from sensor");}
+		}.bind(this), 1000);
 
 		return [
 			informationService,
