@@ -44,17 +44,13 @@ SensirionAQS.prototype = {
 
 	  if(fs.existsSync('/tmp/sensor-sps30.txt')) {
 			setInterval(function(){
-				if(this.debug) {
-					this.log("running timer");
-				}
+				if(this.debug) {this.log("running timer");}
 
 				var count = 0;
 				var rl = readline.createInterface({input: fs.createReadStream('/tmp/sensor-sps30.txt')});
 				rl.on('line', function(line) {
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm2.5",sensor="SPS30"}') {
-						if(this.debug) {
-							this.log("setting pm2.5 to " + line.split(' ')[1]);
-						}
+						if(this.debug) {this.log("setting pm2.5 to " + line.split(' ')[1]);}
 
 						pm25 = line.split(' ')[1];
 
@@ -67,9 +63,7 @@ SensirionAQS.prototype = {
 						else {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(5);}
 					}
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm10",sensor="SPS30"}') {
-						if(this.debug) {
-							this.log("setting pm10 to " + line.split(' ')[1]);
-						}
+						if(this.debug) {this.log("setting pm10 to " + line.split(' ')[1]);}
 
 						this.AQS.getCharacteristic(Characteristic.PM10Density).updateValue(line.split(' ')[1]);
 					}
@@ -78,13 +72,14 @@ SensirionAQS.prototype = {
 		}
 		else {this.log("Unable to find log file from sensor");}
 
-		return [informationService, this.AQS];
+		return [
+			informationService,
+			this.AQS
+		];
 	},
 
 	_getValue: function(CharacteristicName, callback) {
-		if (this.debug) {
-			this.log("GET", CharacteristicName);
-		}
+		if (this.debug) {this.log("GET", CharacteristicName);}
 
 		callback(null);
 	}
