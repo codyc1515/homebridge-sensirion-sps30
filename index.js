@@ -74,7 +74,7 @@ SensirionAQS.prototype = {
 						this.AQS.getCharacteristic(Characteristic.PM10Density).updateValue(line.split(' ')[1]);
 					}
 				}.bind(this));
-			}.bind(this), 5000);
+			}.bind(this), 1000);
 		}
 		else {this.log("Unable to find log file from sensor");}
 

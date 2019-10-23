@@ -1,0 +1,60 @@
+{
+  "_from": "homebridge-sensirion-sps30@latest",
+  "_inBundle": false,
+  "_integrity": "sha512-HqkVf/2WypYEFcA2gKaVKIMDFk4KSkHTPU7m1Lt/Jiyy4E0mRaB8w52S/LSK90/YgAApSehN+wIhQKIl8r8TDA==",
+  "_location": "/homebridge-sensirion-sps30",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "homebridge-sensirion-sps30@latest",
+    "name": "homebridge-sensirion-sps30",
+    "escapedName": "homebridge-sensirion-sps30",
+    "rawSpec": "latest",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER"
+  ],
+  "_resolved": "https://registry.npmjs.org/homebridge-sensirion-sps30/-/homebridge-sensirion-sps30-1.0.2.tgz",
+  "_shasum": "99206cdf00001253d47ec734b8261bb040e5c921",
+  "_spec": "homebridge-sensirion-sps30@latest",
+  "_where": "/usr/local/lib",
+  "author": "codyc1515",
+  "bugs": {
+    "url": "https://github.com/codyc1515/homebridge-sensirion-sps30/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "request": "^2.81.0"
+  },
+  "deprecated": false,
+  "description": "HomeBridge Sensirion SPS30 Air Quality Sensor",
+  "engines": {
+    "homebridge": ">=0.4.0",
+    "node": ">=8.6.0"
+  },
+  "homepage": "https://github.com/codyc1515/homebridge-sensirion-sps30#readme",
+  "keywords": [
+    "homebridge-plugin",
+    "homekit",
+    "sensirion",
+    "sps30",
+    "pm2.5",
+    "pm10",
+    "air quality"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "homebridge-sensirion-sps30",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codyc1515/homebridge-sensirion-sps30.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0",
+  "devDependencies": {}
+}
