@@ -1,7 +1,8 @@
 {
   "_from": "homebridge-sensirion-sps30@latest",
+  "_id": "homebridge-sensirion-sps30@2.0.0",
   "_inBundle": false,
-  "_integrity": "sha512-HqkVf/2WypYEFcA2gKaVKIMDFk4KSkHTPU7m1Lt/Jiyy4E0mRaB8w52S/LSK90/YgAApSehN+wIhQKIl8r8TDA==",
+  "_integrity": "sha512-qn1kwTychHNkHo6Ice/tdf/g/iza4f0WFJETZJy9hKepJUctMFWRrVzWhm8fgenWFjw0nESnouvT7yDjORheog==",
   "_location": "/homebridge-sensirion-sps30",
   "_phantomChildren": {},
   "_requested": {
@@ -15,13 +16,16 @@
     "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#USER"
+    "#USER",
+    "/"
   ],
-  "_resolved": "https://registry.npmjs.org/homebridge-sensirion-sps30/-/homebridge-sensirion-sps30-1.0.2.tgz",
-  "_shasum": "99206cdf00001253d47ec734b8261bb040e5c921",
+  "_resolved": "https://registry.npmjs.org/homebridge-sensirion-sps30/-/homebridge-sensirion-sps30-2.0.0.tgz",
+  "_shasum": "d1dcbde91b8acc1465d5fb89624f01510c860791",
   "_spec": "homebridge-sensirion-sps30@latest",
-  "_where": "/usr/local/lib",
-  "author": "codyc1515",
+  "_where": "/usr/local",
+  "author": {
+    "name": "codyc1515"
+  },
   "bugs": {
     "url": "https://github.com/codyc1515/homebridge-sensirion-sps30/issues"
   },
@@ -32,6 +36,7 @@
   },
   "deprecated": false,
   "description": "HomeBridge Sensirion SPS30 Air Quality Sensor",
+  "devDependencies": {},
   "engines": {
     "homebridge": ">=0.4.0",
     "node": ">=8.6.0"
@@ -56,6 +61,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "1.0.0",
-  "devDependencies": {}
+  "version": "2.0.0"
 }

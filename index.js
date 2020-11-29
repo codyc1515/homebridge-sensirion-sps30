@@ -1,14 +1,18 @@
-var fs = require('fs');
-var readline = require('readline');
+const	inherits = require("util").inherits;
+		fs = require('fs'),
+		readline = require('readline'),
+		moment = require('moment');
 
 var pm25 = 0;
 
-var Service, Characteristic;
+var Service, Characteristic, Accessory, FakeGatoHistoryService;
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 	Accessory = homebridge.hap.Accessory;
+
+	FakeGatoHistoryService = require('fakegato-history')(homebridge);
 
 	homebridge.registerAccessory("homebridge-sensirion-sps30", "SensirionSPS30", SensirionAQS);
 };
@@ -16,6 +20,24 @@ module.exports = function(homebridge) {
 function SensirionAQS(log, config) {
 	this.log = log;
 	this.debug = config["debug"] || false;
+
+	this.SmokeSensorTrigger = config["SmokeSensorTrigger"] || 150;
+
+	// Air Quality (PPM) - FakeGato
+	Characteristic.CustomAirQuality = function() {
+		Characteristic.call(this, 'ppm', 'E863F10B-079E-48FF-8F27-9C2605A29F52');
+		this.setProps({
+			format: Characteristic.Formats.UINT16,
+			unit: 'ppm',
+			minValue: 0,
+			maxValue: 5000,
+			minStep: 1,
+			perms: [Characteristic.Perms.READ, Characteristic.Perms.NOTIFY]
+		});
+		this.value = this.getDefaultValue();
+	};
+	inherits(Characteristic.CustomAirQuality, Characteristic);
+	Characteristic.CustomAirQuality.UUID = 'E863F10B-079E-48FF-8F27-9C2605A29F52';
 }
 
 SensirionAQS.prototype = {
@@ -26,55 +48,78 @@ SensirionAQS.prototype = {
 	},
 
 	getServices: function() {
-		this.AQS = new Service.AirQualitySensor(this.name);
-
-		this.AQS
+		// Air Quality Sensor service
+		this.AirQualitySensor = new Service.AirQualitySensor(this.name);
+		this.AirQualitySensor
 			.getCharacteristic(Characteristic.AirQuality)
 			.on('get', this._getValue.bind(this, "AirQuality"));
-		this.AQS.addCharacteristic(Characteristic.PM2_5Density);
-		this.AQS.addCharacteristic(Characteristic.PM10Density);
+		this.AirQualitySensor.addCharacteristic(Characteristic.PM2_5Density);
+		this.AirQualitySensor.addCharacteristic(Characteristic.PM10Density);
 
-		var informationService = new Service.AccessoryInformation();
-		informationService
+		// Smoke Sensor service
+		this.SmokeSensor = new Service.SmokeSensor(this.name);
+
+		// FakeGato service
+		this.FakeGatoHistoryService = new FakeGatoHistoryService("room", Accessory);
+		this.AirQualitySensor.addCharacteristic(Characteristic.CustomAirQuality);
+		this.AirQualitySensor.addCharacteristic(Characteristic.CurrentTemperature);
+		this.AirQualitySensor.addCharacteristic(Characteristic.CurrentRelativeHumidity);
+
+		// Information service
+		this.AccessoryInformation = new Service.AccessoryInformation();
+		this.AccessoryInformation
 			.setCharacteristic(Characteristic.Name, this.name)
 			.setCharacteristic(Characteristic.Manufacturer, "Sensirion")
 			.setCharacteristic(Characteristic.Model, "SPS30")
 			.setCharacteristic(Characteristic.FirmwareRevision, "1.0.0")
 			.setCharacteristic(Characteristic.SerialNumber, this.device);
 
+		// Set the timer
 		setInterval(function(){
-			if(fs.existsSync('/tmp/sensor-sps30.txt')) {
+			if(fs.existsSync('/tmp/sps30.log')) {
 				if(this.debug) {this.log("running timer");}
 
 				var count = 0;
-				var rl = readline.createInterface({input: fs.createReadStream('/tmp/sensor-sps30.txt')});
+				var rl = readline.createInterface({input: fs.createReadStream('/tmp/sps30.log')});
 				rl.on('line', function(line) {
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm2.5",sensor="SPS30"}') {
-						if(this.debug) {this.log("setting pm2.5 to " + line.split(' ')[1]);}
-
+						// Get the PM 2.5 value
 						pm25 = line.split(' ')[1];
+						if(this.debug) {this.log("PM 2.5", pm25);}
 
-						this.AQS.getCharacteristic(Characteristic.PM2_5Density).updateValue(line.split(' ')[1]);
+						// Set the PM 2.5 Density value
+						this.AirQualitySensor.getCharacteristic(Characteristic.PM2_5Density).updateValue(pm25);
 
-						if(pm25 <= 15) {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(1);}
-						else if(pm25 <= 40) {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(2);}
-						else if(pm25 <= 65) {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(3);}
-						else if(pm25 <= 150) {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(4);}
-						else {this.AQS.getCharacteristic(Characteristic.AirQuality).updateValue(5);}
+						// Set the PPM (PM 2.5) value in FakeGato
+						this.AirQualitySensor.getCharacteristic(Characteristic.CustomAirQuality).updateValue(pm25);
+						this.FakeGatoHistoryService.addEntry({time: Math.round(new Date().valueOf() / 1000), temp: '0', humidity: '0', ppm: pm25 });
+
+						// Set the Air Quality value
+						if(pm25 <= 15) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(1);}
+						else if(pm25 <= 40) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(2);}
+						else if(pm25 <= 65) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(3);}
+						else if(pm25 <= 150) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(4);}
+						else {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(5);}
+
+						if(pm25 >= this.SmokeSensorTrigger) {this.SmokeSensr.getCharacteristic(Characteristic.SmokeDetected).updateValue(1);}
+						else {this.SmokeSensr.getCharacteristic(Characteristic.SmokeDetected).updateValue(0);}
 					}
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm10",sensor="SPS30"}') {
-						if(this.debug) {this.log("setting pm10 to " + line.split(' ')[1]);}
+						if(this.debug) {this.log("PM 10", + line.split(' ')[1]);}
 
-						this.AQS.getCharacteristic(Characteristic.PM10Density).updateValue(line.split(' ')[1]);
+						// Set the PM 10 Density value
+						this.AirQualitySensor.getCharacteristic(Characteristic.PM10Density).updateValue(line.split(' ')[1]);
 					}
 				}.bind(this));
 			}
-			else if(this.debug) {this.log("Unable to find log file from sensor");}
+			else if(this.debug) {this.log("Unable to find log file from the sensor");}
 		}.bind(this), 1000);
 
 		return [
-			informationService,
-			this.AQS
+			this.AirQualitySensor,
+			this.SmokeSensor,
+			this.FakeGatoHistoryService,
+			this.AccessoryInformation
 		];
 	},
 
