@@ -16,13 +16,12 @@
     "fetchSpec": "latest"
   },
   "_requiredBy": [
-    "#USER",
-    "/"
+    "#USER"
   ],
   "_resolved": "https://registry.npmjs.org/homebridge-sensirion-sps30/-/homebridge-sensirion-sps30-2.0.0.tgz",
   "_shasum": "d1dcbde91b8acc1465d5fb89624f01510c860791",
   "_spec": "homebridge-sensirion-sps30@latest",
-  "_where": "/usr/local",
+  "_where": "/usr",
   "author": {
     "name": "codyc1515"
   },
@@ -61,5 +60,5 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "2.0.0"
+  "version": "2.0.1"
 }

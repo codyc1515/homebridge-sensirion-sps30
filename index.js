@@ -102,7 +102,7 @@ SensirionAQS.prototype = {
 						else {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(5);}
 
 						if(pm25 >= this.SmokeSensorTrigger) {this.SmokeSensr.getCharacteristic(Characteristic.SmokeDetected).updateValue(1);}
-						else {this.SmokeSensr.getCharacteristic(Characteristic.SmokeDetected).updateValue(0);}
+						else {this.SmokeSensor.getCharacteristic(Characteristic.SmokeDetected).updateValue(0);}
 					}
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm10",sensor="SPS30"}') {
 						if(this.debug) {this.log("PM 10", + line.split(' ')[1]);}
