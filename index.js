@@ -95,14 +95,14 @@ SensirionAQS.prototype = {
 						this.FakeGatoHistoryService.addEntry({time: Math.round(new Date().valueOf() / 1000), temp: '0', humidity: '0', ppm: pm25 });
 
 						// Set the Air Quality value
-						if(pm25 <= 15) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(1);}
-						else if(pm25 <= 40) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(2);}
-						else if(pm25 <= 65) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(3);}
-						else if(pm25 <= 150) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(4);}
-						else {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(5);}
+						if(pm25 <= 15) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(Characteristic.AirQuality.EXCELLENT);}
+						else if(pm25 <= 40) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(Characteristic.AirQuality.GOOD);}
+						else if(pm25 <= 65) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(Characteristic.AirQuality.FAIR);}
+						else if(pm25 <= 150) {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(Characteristic.AirQuality.INFERIOR);}
+						else {this.AirQualitySensor.getCharacteristic(Characteristic.AirQuality).updateValue(Characteristic.AirQuality.POOR);}
 
-						if(pm25 >= this.SmokeSensorTrigger) {this.SmokeSensr.getCharacteristic(Characteristic.SmokeDetected).updateValue(1);}
-						else {this.SmokeSensor.getCharacteristic(Characteristic.SmokeDetected).updateValue(0);}
+						if(pm25 >= this.SmokeSensorTrigger) {this.SmokeSensor.getCharacteristic(Characteristic.SmokeDetected).updateValue(Characteristic.SmokeDetected.SMOKE_DETECTED);}
+						else {this.SmokeSensor.getCharacteristic(Characteristic.SmokeDetected).updateValue(Characteristic.SmokeDetected.SMOKE_NOT_DETECTED);}
 					}
 					if(line.split(' ')[0] === 'particulate_matter_ugpm3{size="pm10",sensor="SPS30"}') {
 						if(this.debug) {this.log("PM 10", + line.split(' ')[1]);}
